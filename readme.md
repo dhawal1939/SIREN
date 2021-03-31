@@ -1,4 +1,4 @@
-#SIREN
+# SIREN
 
 Image SIREN implementation based on ```Implicit Neural Representation with Periodic Activation Functions``` presented in NeurIPS 2020
 

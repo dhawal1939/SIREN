@@ -1,6 +1,6 @@
 #SIREN
 
-Image SIREN implementation based on the paper on ```Implicit Neural Representation with Periodic Activation Functions```
+Image SIREN implementation based on ```Implicit Neural Representation with Periodic Activation Functions``` presented in NeurIPS 2020
 
 
 

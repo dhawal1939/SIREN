@@ -73,22 +73,22 @@ for epoch in range(epochs):
             Intensity Loss
             '''
 
-            y_true = batch['intensity'][:, None].to(torch.float32)
-            y_true = y_true.cuda() if torch.cuda.is_available() else y_true
+            # y_true = batch['intensity'][:, None].to(torch.float32)
+            # y_true = y_true.cuda() if torch.cuda.is_available() else y_true
 
-            intensity_loss = siren_criterion(y_pred_siren, y_true)
-            del y_true
+            # intensity_loss = siren_criterion(y_pred_siren, y_true)
+            # del y_true
 
             '''
             Gradient Loss
             '''
-            y_true_grad = batch['grad'].to(torch.float32)
-            y_true_grad = y_true_grad.cuda() if torch.cuda.is_available() else y_true_grad
+            # y_true_grad = batch['grad'].to(torch.float32)
+            # y_true_grad = y_true_grad.cuda() if torch.cuda.is_available() else y_true_grad
 
-            y_pred_grad_siren = gradient_utils.gradient(y_pred_siren, x)
+            # y_pred_grad_siren = gradient_utils.gradient(y_pred_siren, x)
 
-            gradient_loss = siren_criterion(y_pred_grad_siren, y_true_grad)
-            del y_true_grad
+            # gradient_loss = siren_criterion(y_pred_grad_siren, y_true_grad)
+            # del y_true_grad
             
             '''
             Laplace Loss
@@ -104,7 +104,7 @@ for epoch in range(epochs):
             '''
             Combined Loss
             '''
-            siren_loss = intensity_loss + gradient_loss + laplace_loss
+            siren_loss = laplace_loss
 
             siren_losses.append(siren_loss.item())
 
@@ -170,4 +170,4 @@ for epoch in range(epochs):
             axs[0, 0].set_title("Ground truth")
             axs[0, 1].set_title("Prediction")
 
-            plt.savefig(f"visualization_all/{epoch}.png")
+            plt.savefig(f"visualization_laplace/{epoch}.png")

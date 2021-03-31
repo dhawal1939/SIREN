@@ -14,20 +14,21 @@ from torchvision.io.image import ImageReadMode
 from model import *
 from gradient_utils import *
 from utils import *
-
+import cv2
 
 img_path  = pathlib.Path.cwd() / 'imgs' / 'shaderball.png'
-img_ = read_image(str(img_path), ImageReadMode.GRAY)/ 255.
+img_ = cv2.cvtColor(cv2.imread(str(img_path)), cv2.COLOR_RGBA2GRAY)/ 255.
 img = 2 * (img_ - .5)
-img = torch.squeeze(img)
+img = torch.Tensor(img)
 downsampling_factor = 2
 img =  img[::downsampling_factor, ::downsampling_factor]
+print(img.size())
 dataset = pixel_dataset(torch.squeeze(img))
 
 #Hyperparameters
 epochs = 15000
 batch_size = img.size()[1] ** 2
-log_freq = 3
+log_freq = 20
 
 hidden_features = 256
 hidden_layers = 3
@@ -73,11 +74,11 @@ for epoch in range(epochs):
             Intensity Loss
             '''
 
-            y_true = batch['intensity'][:, None].to(torch.float32)
-            y_true = y_true.cuda() if torch.cuda.is_available() else y_true
+            # y_true = batch['intensity'][:, None].to(torch.float32)
+            # y_true = y_true.cuda() if torch.cuda.is_available() else y_true
 
-            intensity_loss = siren_criterion(y_pred_siren, y_true)
-            del y_true
+            # intensity_loss = siren_criterion(y_pred_siren, y_true)
+            # del y_true
 
             '''
             Gradient Loss
@@ -93,18 +94,18 @@ for epoch in range(epochs):
             '''
             Laplace Loss
             '''
-            y_true_laplace = batch['laplace'][:, None].to(torch.float32)
-            y_true_laplace = y_true_laplace.cuda() if torch.cuda.is_available() else y_true_laplace
+            # y_true_laplace = batch['laplace'][:, None].to(torch.float32)
+            # y_true_laplace = y_true_laplace.cuda() if torch.cuda.is_available() else y_true_laplace
 
-            y_pred_laplace_siren = gradient_utils.laplace(y_pred_siren, x)
+            # y_pred_laplace_siren = gradient_utils.laplace(y_pred_siren, x)
 
-            laplace_loss = siren_criterion(y_pred_laplace_siren, y_true_laplace)
-            del y_true_laplace
+            # laplace_loss = siren_criterion(y_pred_laplace_siren, y_true_laplace)
+            # del y_true_laplace
 
             '''
             Combined Loss
             '''
-            siren_loss = intensity_loss + gradient_loss + laplace_loss
+            siren_loss = gradient_loss
 
             siren_losses.append(siren_loss.item())
 
@@ -170,4 +171,5 @@ for epoch in range(epochs):
             axs[0, 0].set_title("Ground truth")
             axs[0, 1].set_title("Prediction")
 
-            plt.savefig(f"visualization_all/{epoch}.png")
+            plt.savefig(f"visualization_gradient/{epoch}.png")
+            plt.close(fig)
